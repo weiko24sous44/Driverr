@@ -1,0 +1,54 @@
+;
+; VirtualDriver.inf
+; Installation file for VirtualDriver kernel driver
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ManufacturerName%
+DriverVer=01/01/2024,1.0.0.0
+CatalogFile=VirtualDriver.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+VirtualDriver_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+VirtualDriver.sys = 1,,
+
+; Manufacturer section
+[Manufacturer]
+%ManufacturerName%=Standard,NTamd64
+
+[Standard.NTamd64]
+%VirtualDriver.DeviceDesc%=VirtualDriver_Device, Root\VirtualDriver
+
+; Installation section
+[VirtualDriver_Device.NT]
+CopyFiles=VirtualDriver_Device_CopyFiles
+
+[VirtualDriver_Device_CopyFiles]
+VirtualDriver.sys
+
+[VirtualDriver_Device.NT.Services]
+AddService = VirtualDriver,%SPSVCINST_ASSOCSERVICE%, VirtualDriver_Service_Inst
+
+[VirtualDriver_Service_Inst]
+DisplayName    = %VirtualDriver.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\VirtualDriver.sys
+
+; Strings section
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ManufacturerName="VirtualDriver"
+DiskName="VirtualDriver Installation Disk"
+VirtualDriver.DeviceDesc="VirtualDriver Device"
+VirtualDriver.SVCDESC="VirtualDriver Kernel Driver"
