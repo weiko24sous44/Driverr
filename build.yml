@@ -1,0 +1,37 @@
+name: Build Windows Driver
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Build Driver (Debug x64)
+      run: msbuild VirtualDriver.sln /p:Configuration=Debug /p:Platform=x64
+      
+    - name: Build Driver (Release x64)
+      run: msbuild VirtualDriver.sln /p:Configuration=Release /p:Platform=x64
+      
+    - name: Upload Debug Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: Debug-x64
+        path: x64/Debug/VirtualDriver.sys
+        
+    - name: Upload Release Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: Release-x64
+        path: x64/Release/VirtualDriver.sys
